@@ -521,13 +521,14 @@ GameObject:
   - component: {fileID: 404718021}
   - component: {fileID: 404718020}
   - component: {fileID: 404718019}
+  - component: {fileID: 404718022}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Doll
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &404718018
 RectTransform:
   m_ObjectHideFlags: 0
@@ -637,6 +638,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 404718017}
   m_CullTransparentMesh: 1
+--- !u!95 &404718022
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 404718017}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &489215678
 GameObject:
   m_ObjectHideFlags: 0
@@ -1139,7 +1161,7 @@ CanvasGroup:
   m_GameObject: {fileID: 773686006}
   m_Enabled: 1
   m_Alpha: 1
-  m_Interactable: 0
+  m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
 --- !u!114 &773686009
@@ -1155,7 +1177,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.5882353}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.7294118}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1459,6 +1481,7 @@ GameObject:
   - component: {fileID: 1148073659}
   - component: {fileID: 1148073658}
   - component: {fileID: 1148073657}
+  - component: {fileID: 1148073661}
   m_Layer: 5
   m_Name: OpenMirror
   m_TagString: Untagged
@@ -1499,8 +1522,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d855e1ee58f4040308c129750175382a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dollObject: {fileID: 0}
-  dollAnimator: {fileID: 0}
+  dollObject: {fileID: 404718017}
+  dollAnimator: {fileID: 404718022}
 --- !u!114 &1148073658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1595,6 +1618,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1148073655}
   m_CullTransparentMesh: 1
+--- !u!114 &1148073661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148073655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83bd1f22a1caae947ae0967e2b4a50b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  needle: {fileID: 1148073656}
+  hoverScale: 1.2
+  scaleSpeed: 10
 --- !u!1 &1180450681
 GameObject:
   m_ObjectHideFlags: 0
@@ -1933,12 +1971,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c28baf3cd73284e0b8335fd86c1c6a68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mirror: {fileID: 0}
-  mirrorOverlay: {fileID: 0}
-  dollController: {fileID: 0}
+  mirror: {fileID: 1148073656}
+  mirrorOverlay: {fileID: 1928450377}
+  dollController: {fileID: 1148073657}
   durationIn: 1
   durationOut: 0.5
   zoomScale: {x: 2.5, y: 2.5, z: 1}
+  targetRotation: {x: 0, y: 0, z: 0}
   animationStartDelay: 0.5
 --- !u!4 &1510000150
 Transform:
@@ -2308,7 +2347,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &1928450377
 CanvasGroup:
@@ -2319,7 +2358,7 @@ CanvasGroup:
   m_GameObject: {fileID: 1928450375}
   m_Enabled: 1
   m_Alpha: 0
-  m_Interactable: 0
+  m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
 --- !u!1 &2136735928

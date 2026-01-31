@@ -8,20 +8,24 @@ public class MirrorZoomController : MonoBehaviour
     [SerializeField] private CanvasGroup mirrorOverlay; 
     [SerializeField] private MirrorDollController dollController; 
 
-    // Bỏ dòng [SerializeField] DollType cũ đi
-    // Thêm biến lưu trữ data của con búp bê đang soi
     private DollData currentTargetDoll; 
 
     [Header("Animation Settings")]
     [SerializeField] private float durationIn = 0.4f;  
     [SerializeField] private float durationOut = 0.4f; 
+    
+    // Bạn có thể chỉnh scale to hơn tại đây (ví dụ: 3, 3, 1)
     [SerializeField] private Vector3 zoomScale = new Vector3(2.5f, 2.5f, 1f); 
+    
+    // Đặt trục Z là 45 để khi phóng to xong gương sẽ ở góc này
+    [SerializeField] private Vector3 targetRotation = new Vector3(0, 0, 45f);
 
     [Header("Timing")]
     [SerializeField] private float animationStartDelay = 0.5f; 
 
     private Vector3 startPos;
     private Vector3 startScale;
+    private Quaternion startRotation; 
     private bool isZoomed;
     private Coroutine currentRoutine;
 
@@ -33,8 +37,10 @@ public class MirrorZoomController : MonoBehaviour
             return;
         }
 
+        // Lưu thông số ban đầu (bao gồm Pos, Scale và Rotation 0,0,20 của bạn)
         startPos = mirror.position;
         startScale = mirror.localScale;
+        startRotation = mirror.rotation; 
 
         if(mirrorOverlay != null)
         {
@@ -45,13 +51,10 @@ public class MirrorZoomController : MonoBehaviour
         if(dollController != null) dollController.HideDoll();
     }
 
-    // --- HÀM MỚI QUAN TRỌNG ---
-    // Gọi hàm này TRƯỚC khi bật gương để set búp bê mục tiêu
     public void SetTargetDoll(DollData dollData)
     {
         currentTargetDoll = dollData;
     }
-    // ---------------------------
 
     public void ToggleMirror()
     {
@@ -66,11 +69,9 @@ public class MirrorZoomController : MonoBehaviour
 
     private IEnumerator ZoomIn()
     {
-        // Kiểm tra an toàn: Nếu chưa set data thì không cho zoom hoặc báo lỗi
         if (currentTargetDoll == null)
         {
             Debug.LogWarning("Chưa gán Target Doll cho gương! Gọi SetTargetDoll trước.");
-            // Vẫn cho zoom nhưng có thể không hiện doll, hoặc return tùy bạn
         }
 
         isZoomed = true;
@@ -78,6 +79,8 @@ public class MirrorZoomController : MonoBehaviour
         if(mirrorOverlay != null) mirrorOverlay.gameObject.SetActive(true);
 
         Vector3 targetPos = new Vector3(Screen.width / 2f, Screen.height / 2f, mirror.position.z);
+        Quaternion targetRot = Quaternion.Euler(targetRotation);
+
         float time = 0f;
 
         while (time < durationIn)
@@ -85,8 +88,11 @@ public class MirrorZoomController : MonoBehaviour
             time += Time.unscaledDeltaTime;
             float t = time / durationIn;
 
+            // Di chuyển, phóng to và xoay cùng lúc
             mirror.position = Vector3.Lerp(startPos, targetPos, t);
             mirror.localScale = Vector3.Lerp(startScale, zoomScale, t);
+            mirror.rotation = Quaternion.Lerp(startRotation, targetRot, t);
+
             if(mirrorOverlay != null) mirrorOverlay.alpha = Mathf.Lerp(0f, 1f, t);
 
             yield return null;
@@ -94,13 +100,14 @@ public class MirrorZoomController : MonoBehaviour
 
         mirror.position = targetPos;
         mirror.localScale = zoomScale;
+        mirror.rotation = targetRot;
+
         if(mirrorOverlay != null) mirrorOverlay.alpha = 1f;
 
         Time.timeScale = 0f;
 
         yield return new WaitForSecondsRealtime(animationStartDelay);
 
-        // TRUYỀN DATA VÀO CONTROLLER
         if (currentTargetDoll != null)
         {
             dollController.ShowDoll(currentTargetDoll);
@@ -115,6 +122,7 @@ public class MirrorZoomController : MonoBehaviour
 
         Vector3 currentPos = mirror.position;
         Vector3 currentScale = mirror.localScale;
+        Quaternion currentRot = mirror.rotation; 
 
         float time = 0f;
 
@@ -123,8 +131,11 @@ public class MirrorZoomController : MonoBehaviour
             time += Time.unscaledDeltaTime;
             float t = time / durationOut;
 
+            // Trả mọi thứ về trạng thái ban đầu (bao gồm góc 0,0,20)
             mirror.position = Vector3.Lerp(currentPos, startPos, t);
             mirror.localScale = Vector3.Lerp(currentScale, startScale, t);
+            mirror.rotation = Quaternion.Lerp(currentRot, startRotation, t);
+
             if(mirrorOverlay != null) mirrorOverlay.alpha = Mathf.Lerp(1f, 0f, t);
 
             yield return null;
@@ -132,6 +143,7 @@ public class MirrorZoomController : MonoBehaviour
 
         mirror.position = startPos;
         mirror.localScale = startScale;
+        mirror.rotation = startRotation; 
         
         if(mirrorOverlay != null)
         {

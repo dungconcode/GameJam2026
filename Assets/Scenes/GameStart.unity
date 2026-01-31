@@ -1325,8 +1325,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -120.25037, y: -127.43585}
-  m_SizeDelta: {x: 165.5007, y: 160.162}
+  m_AnchoredPosition: {x: -92.33154, y: -99.86603}
+  m_SizeDelta: {x: 135.8376, y: 134.1397}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1015552391
 MonoBehaviour:
@@ -1404,7 +1404,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 575fe6f344f9f2e489271226c739e951, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a313bc42248ab4e43a4ee615831e08fd, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1894,7 +1894,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   musicSource: {fileID: 1071794029}
   sfxSource: {fileID: 664871123}
-  background: {fileID: 8300000, guid: f464355fd221d1e45b3823785a8f77db, type: 3}
+  background: {fileID: 8300000, guid: 9e687bbf85d88c843b6cfe4dc4293266, type: 3}
 --- !u!4 &1309800077
 Transform:
   m_ObjectHideFlags: 0

@@ -14,8 +14,14 @@ public class GameManager : MonoBehaviour
 
     private bool gameStarted;
     private bool openedLetter;
+    public AudioManager audio;
+
     private void Awake()
     {
+        if(audio != null){
+            audio.PlayMusicBG();
+        }
+        
         openedLetter = false;
         //gameStarted = false;
         if (blackScreen != null) blackScreen.SetActive(false);
@@ -47,4 +53,5 @@ public class GameManager : MonoBehaviour
         if (dollManager != null)
             dollManager.BeginGame();
     }
+
 }

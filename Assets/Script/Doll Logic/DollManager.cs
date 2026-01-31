@@ -191,4 +191,12 @@ public class DollManager : MonoBehaviour
         OnNextLockChanged?.Invoke(lockNext);
     }
 
-}
+    // --- BẮT ĐẦU ĐOẠN CẦN THÊM ---
+    public DollData GetCurrentDollData()
+    {
+        if (currentDoll == null) return null;
+        return currentDoll.GetComponent<DollData>();
+    }
+    // --- KẾT THÚC ĐOẠN CẦN THÊM ---
+} // <-- Đây là dấu đóng class DollManager
+

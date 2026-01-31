@@ -13,6 +13,7 @@ public class AudioManager : MonoBehaviour
 
     public void PlayMusicBG()
     {
+        Debug.Log("Dung ngu");
         musicSource.clip = background;
         musicSource.Play();
     }

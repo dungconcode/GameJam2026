@@ -12,34 +12,56 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject letterButton;
     [SerializeField] private GameObject buttonsRoot;
 
-    private bool gameStarted;
+    // --- SỬA Ở ĐÂY: Đổi sang kiểu script mới là GameOverSimple ---
+    [SerializeField] private GameOverSimple gameOverScript; 
+    // -----------------------------------------------------------
+
+    // Đổi tên biến audio thành audioManager để tránh Warning màu vàng
+    public AudioManager audioManager; 
+
     private bool openedLetter;
+
+    // Hàm này được DollManager gọi khi sai 4 lần
+    public void ShowGameOverEvent()
+    {
+        // 1. Ẩn các nút bấm chơi game
+        if (buttonsRoot != null) buttonsRoot.SetActive(false);
+
+        // 2. Gọi script Fade In của màn hình thua
+        if (gameOverScript != null)
+        {
+            gameOverScript.Show();
+        }
+    }
+
     private void Awake()
     {
+        if(audioManager != null){
+            audioManager.PlayMusicBG();
+        }
+        
         openedLetter = false;
-        //gameStarted = false;
+
+        // Setup trạng thái đầu game
         if (blackScreen != null) blackScreen.SetActive(false);
         if (letterButton != null) letterButton.SetActive(true);
-
         if (buttonsRoot != null) buttonsRoot.SetActive(false);
+        
         if (dollManager != null)
             dollManager.SetUIState(true, true);
     }
+
     public void OnLetterPressed()
     {
         if (openedLetter) return;
         openedLetter = true;
-        //Debug.Log("Letter Pressed");
+        
         if (blackScreen != null) blackScreen.SetActive(true);
         letterButton.SetActive(false);
-        //StartGameplay();
     }
 
     public void StartGameplay()
     {
-        //if (gameStarted) return;
-        //gameStarted = true;
-
         if (blackScreen != null) blackScreen.SetActive(false);
         if (letterButton != null) letterButton.SetActive(false);
         if (buttonsRoot != null) buttonsRoot.SetActive(true);

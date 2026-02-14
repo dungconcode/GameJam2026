@@ -31,20 +31,23 @@ public class DollManager : MonoBehaviour
     {
         pool = new List<GameObject>(dollPrefabs);
     }
-    //private void Start()
-    //{
-    //    SpawnNext();
-    //}
+
     public void BeginGame()
     {
         SpawnNext();
     }
+
     private void SpawnNext()
     {
         if (currentDoll != null)
             Destroy(currentDoll);
 
-        if (countDolls == 0) { Debug.Log("No more dolls to spawn."); return; }
+        // Quay lại logic cũ: Khi hết búp bê thì chỉ log ra console, không kích hoạt sự kiện kết thúc
+        if (countDolls == 0) 
+        { 
+            Debug.Log("No more dolls to spawn."); 
+            return; 
+        }
 
         if (pool.Count == 0) { Debug.LogError("Pool empty!"); return; }
 
@@ -57,6 +60,7 @@ public class DollManager : MonoBehaviour
 
         currentDoll = Instantiate(prefab, spawnPoint.position, Quaternion.identity);
         countDolls--;
+        
         waitingForDecision = false;
         waitingForNext = false;
         OnDecisionLockChanged?.Invoke(true);
@@ -77,6 +81,7 @@ public class DollManager : MonoBehaviour
             OnDecisionLockChanged?.Invoke(false);
         }
     }
+
     IEnumerator WaitAndSpawnNext(float delay, Transform pos)
     {
         yield return new WaitForSeconds(delay);
@@ -97,11 +102,18 @@ public class DollManager : MonoBehaviour
         waitingForDecision = false;           
         OnDecisionLockChanged?.Invoke(true);  
 
-        waitingForNext = true;               
-        OnNextLockChanged?.Invoke(false);    
+        // Chỉ cho phép hiện nút Next nếu người chơi chưa làm sai quá 4 lần
+        if (wrongCount < 4)
+        {
+            waitingForNext = true;               
+            OnNextLockChanged?.Invoke(false);    
+        }
     }
+
     private void EvaluateDecision(bool playerPass)
     {
+        if (currentDoll == null) return;
+        
         DollData data = currentDoll.GetComponent<DollData>();
         if (data == null)
         {
@@ -110,7 +122,6 @@ public class DollManager : MonoBehaviour
         }
 
         bool isCorrect;
-
         if (data.IsAbnormal())
             isCorrect = !playerPass;
         else
@@ -126,6 +137,15 @@ public class DollManager : MonoBehaviour
         }
 
         Debug.Log($"Correct: {correctCount} | Wrong: {wrongCount}");
+
+        // CHỈ THÊM LOGIC NÀY: Khi sai đúng 4 lần mới kích hoạt sự kiện "Thua"
+        if (wrongCount >= 4)
+        {
+            Debug.Log("Sự kiện thua: Bạn đã làm sai 4 lần!");
+            StopAllCoroutines(); // Dừng búp bê đang chạy
+            // Gọi hàm xử lý hiện bức thư trượt ra ở GameManager
+            FindObjectOfType<GameManager>().SendMessage("ShowGameOverEvent", SendMessageOptions.DontRequireReceiver);
+        }
     }
 
     #region Button Actions
@@ -133,62 +153,67 @@ public class DollManager : MonoBehaviour
     {
         if (!waitingForDecision) return;
         waitingForDecision = false;
-
         OnDecisionLockChanged?.Invoke(true);
 
         EvaluateDecision(true);
-        StartCoroutine(WaitAndSpawnNext(0.5f, passPoint));
+        
+        // Chỉ tiếp tục luồng búp bê nếu chưa bị thua
+        if(wrongCount < 4)
+            StartCoroutine(WaitAndSpawnNext(0.5f, passPoint));
     }
+
     public void Cancel()
     {
         if (!waitingForDecision) return;
         waitingForDecision = false;
-
         OnDecisionLockChanged?.Invoke(true); 
 
         EvaluateDecision(false);
-        StartCoroutine(WaitAndSpawnNext(0.5f, cancelPoint));
+        
+        if(wrongCount < 4)
+            StartCoroutine(WaitAndSpawnNext(0.5f, cancelPoint));
     }
+
     public void Next()
     {
         if (!waitingForNext) return;
-
         waitingForNext = false;
         OnNextLockChanged?.Invoke(true);
-
         SpawnNext();
     }
     #endregion
-    #region Needle Interaction
+
+    #region Interaction
     public void PokeNeedle()
     {
         if (currentDoll == null) return;
-
         var react = currentDoll.GetComponent<DollNeedleReaction>();
-        if (react != null)
-            react.OnNeedlePoke();
+        if (react != null) react.OnNeedlePoke();
     }
-    #endregion
 
     public void UseFlashlight()
     {
         if (currentDoll == null) return;
-
         DollData data = currentDoll.GetComponent<DollData>();
-        if (data == null) return;
-        if (!waitingForDecision) return;
+        if (data == null || !waitingForDecision) return;
 
         if (data.abnormalTrait == AbnormalTrait.BloodyBody)
         {
             var reveal = currentDoll.GetComponent<DollBloodReveal>();
-            if (reveal != null)
-                reveal.RevealOnce();
+            if (reveal != null) reveal.RevealOnce();
         }
     }
+    #endregion
+
     public void SetUIState(bool lockDecision, bool lockNext)
     {
         OnDecisionLockChanged?.Invoke(lockDecision);
         OnNextLockChanged?.Invoke(lockNext);
     }
 
+    public DollData GetCurrentDollData()
+    {
+        if (currentDoll == null) return null;
+        return currentDoll.GetComponent<DollData>();
+    }
 }
